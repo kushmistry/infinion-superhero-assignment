@@ -78,8 +78,8 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 ## Default Login
 
 After seeding:
-- Email: `superhero.admin@mailinator.com`
-- Password: `admin123`
+- Email: `superhero@mailinator.com`
+- Password: `Admin@123`
 
 ## URLs
 
