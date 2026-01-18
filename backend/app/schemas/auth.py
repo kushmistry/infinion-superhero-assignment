@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
+from typing import Optional, Union
 from datetime import datetime
 
 # User schemas
@@ -67,10 +67,12 @@ class ErrorResponse(BaseModel):
     detail: Optional[str] = None
 
 # Common API Response Format
+from typing import Union
+
 class APIResponse(BaseModel):
     status: str  # "success" or "error"
     message: str
-    data: Optional[dict] = None
+    data: Optional[Union[dict, list]] = None
 
 # Token verification
 class VerifyTokenRequest(BaseModel):

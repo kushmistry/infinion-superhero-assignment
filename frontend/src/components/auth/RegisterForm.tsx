@@ -56,7 +56,7 @@ export default function RegisterForm() {
 
         if (loginResponse.data.status === 'success') {
           login(loginResponse.data.data);
-          router.push('/dashboard');
+          router.push('/heroes');
         }
       } else {
         const errorMessage = getUserFriendlyErrorMessage(response.data.message || 'Registration failed');

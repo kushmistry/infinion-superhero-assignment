@@ -2,15 +2,21 @@
 
 import { ReactNode } from 'react';
 import { Toaster } from 'react-hot-toast';
+import Navbar from './Navbar';
+import { useAuth } from '@/contexts/AuthContext';
+import { cn } from '@/lib/utils';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="min-h-screen bg-gray-950">
-      <main className="flex-1">
+      {isAuthenticated && <Navbar />}
+      <main className={cn("flex-1", isAuthenticated && "pt-16")}>
         {children}
       </main>
       <Toaster

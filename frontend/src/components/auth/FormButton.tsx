@@ -1,5 +1,8 @@
 'use client';
 
+import { PrimaryButton } from '@/components/common/PrimaryButton';
+import { cn } from '@/lib/utils';
+
 interface FormButtonProps {
   type?: 'submit' | 'button';
   disabled?: boolean;
@@ -16,13 +19,13 @@ export default function FormButton({
   className = ""
 }: FormButtonProps) {
   return (
-    <button
+    <PrimaryButton
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-4 rounded-lg hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-950 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all duration-200 font-semibold shadow-lg ${className}`}
+      className={cn("w-full", className)}
     >
       {children}
-    </button>
+    </PrimaryButton>
   );
 }

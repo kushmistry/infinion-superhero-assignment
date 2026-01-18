@@ -1,10 +1,11 @@
 import requests
 import json
+import logging
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from ..models.superhero import Superhero
 from ..config import settings
-from ..utils import get_logger
+from ..utils import setup_logger
 import time
 
 class SuperheroSeeder:
@@ -13,7 +14,7 @@ class SuperheroSeeder:
         self.token = settings.SUPERHERO_API_TOKEN
         self.batch_size = 10  # Process 10 heroes at a time
         self.delay = 1  # Delay between requests to avoid rate limiting
-        self.logger = get_logger("superhero_seeder")
+        self.logger = setup_logger("superhero_seeder", level=logging.INFO)
 
     def fetch_superhero(self, hero_id: int) -> dict:
         """Fetch a single superhero from the API"""
@@ -142,28 +143,44 @@ class SuperheroSeeder:
 
             self.logger.info(f"Seeding {len(hero_ids)} heroes...")
 
+            # Track progress
+            total_added = 0
+
             # Process in batches
             for i in range(0, len(hero_ids), self.batch_size):
                 batch_ids = hero_ids[i:i + self.batch_size]
-                self.logger.info(f"Processing batch {i//self.batch_size + 1}: heroes {batch_ids[0]}-{batch_ids[-1]}")
+                batch_num = i//self.batch_size + 1
+                total_batches = (len(hero_ids) + self.batch_size - 1) // self.batch_size
+                self.logger.info(f"Processing batch {batch_num}/{total_batches}: heroes {batch_ids[0]}-{batch_ids[-1]}")
 
                 # Fetch batch
                 batch_data = self.fetch_batch(batch_ids)
 
                 # Create superhero objects
                 superheroes = []
-                for data in batch_data:
+                for idx, data in enumerate(batch_data):
                     try:
                         hero = self.create_superhero_from_data(data)
                         superheroes.append(hero)
+                        total_added += 1
+                        # Show progress for each hero
+                        self.logger.info(f"{total_added} complete - {hero.name}")
                     except Exception as e:
                         self.logger.error(f"Error creating hero from data: {e}")
 
                 # Bulk insert
                 if superheroes:
-                    db.add_all(superheroes)
-                    db.commit()
-                    self.logger.info(f"Added {len(superheroes)} heroes to database")
+                    try:
+                        db.add_all(superheroes)
+                        db.commit()
+                        self.logger.info(f"✅ Batch {batch_num}: Successfully added {len(superheroes)} heroes to database")
+                        self.logger.info(f"   Total heroes in database now: {total_added}/{len(hero_ids)}")
+                    except Exception as e:
+                        db.rollback()
+                        self.logger.error(f"❌ Batch {batch_num}: Failed to add heroes to database: {e}")
+                        raise
+                else:
+                    self.logger.warning(f"⚠️  Batch {batch_num}: No valid heroes to add from this batch")
 
                 # Rate limiting delay
                 if i + self.batch_size < len(hero_ids):

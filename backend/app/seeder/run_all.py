@@ -23,13 +23,14 @@ Or from the seeder directory:
 
 import sys
 import argparse
+import logging
 from .superhero_seeder import run_seeder
 from .user_seeder import run_user_seeder
-from ..utils import get_logger
+from ..utils import setup_logger
 
 def seed_superheroes():
     """Seed superhero data from Superhero API"""
-    logger = get_logger("seeder_runner")
+    logger = setup_logger("seeder_runner", level=logging.INFO)
 
     logger.info("🌟 Starting superhero database seeding...")
     logger.info("This will fetch data for 732 superheroes from the Superhero API")
@@ -46,7 +47,7 @@ def seed_superheroes():
 
 def seed_users():
     """Seed user data (admin account)"""
-    logger = get_logger("seeder_runner")
+    logger = setup_logger("seeder_runner", level=logging.INFO)
 
     logger.info("🌟 Starting user seeding...")
     logger.info("This will create the admin user account")
@@ -60,21 +61,26 @@ def seed_users():
         return False
 
 def main():
-    logger = get_logger("seeder_runner")
+    logger = setup_logger("seeder_runner", level=logging.INFO)
 
     parser = argparse.ArgumentParser(description="Database seeding script")
     parser.add_argument(
         "seeders",
         nargs="*",
-        choices=["superhero", "user", "all"],
-        help="Specify which seeders to run (default: all available seeders)"
+        help="Specify which seeders to run: 'superhero', 'user', or 'all' (default: all)"
     )
 
     args = parser.parse_args()
 
     # If no seeders specified, run all
-    if not args.seeders:
+    if not args.seeders or len(args.seeders) == 0:
         args.seeders = ["all"]
+    
+    # Validate choices
+    valid_choices = ["superhero", "user", "all"]
+    for seeder in args.seeders:
+        if seeder not in valid_choices:
+            parser.error(f"Invalid choice: '{seeder}'. Choose from: {', '.join(valid_choices)}")
 
     # Run selected seeders
     if "all" in args.seeders or "superhero" in args.seeders:

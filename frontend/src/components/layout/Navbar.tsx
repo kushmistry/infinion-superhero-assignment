@@ -2,63 +2,75 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = () => {
     logout();
     router.push('/');
   };
 
+  const navLinks = [
+    { href: '/heroes', label: 'Heroes' },
+    { href: '/teams', label: 'Teams' },
+    { href: '/favorites', label: 'Favorites' },
+  ];
+
   return (
-    <nav className="bg-white border-b border-gray-200">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center h-14">
-          <Link href="/" className="font-bold text-lg text-gray-900">
-            Superhero Hub
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-purple-500/30">
+      <div className="max-w-7xl mx-auto px-8">
+        <div className="flex justify-between items-center h-16">
+          <Link href="/heroes" className="font-bold text-xl text-white hover:text-purple-400 transition-colors">
+            SuperHero Hub
           </Link>
 
           {isAuthenticated && (
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 text-sm">
-                Dashboard
-              </Link>
-              <Link href="/superheroes" className="text-gray-700 hover:text-blue-600 text-sm">
-                Heroes
-              </Link>
-              <Link href="/teams" className="text-gray-700 hover:text-blue-600 text-sm">
-                Teams
-              </Link>
-              <Link href="/favorites" className="text-gray-700 hover:text-blue-600 text-sm">
-                Favorites
-              </Link>
+            <div className="hidden md:flex items-center space-x-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                    pathname === link.href
+                      ? "bg-purple-600 text-white"
+                      : "text-gray-300 hover:text-white hover:bg-gray-800"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           )}
 
           <div className="flex items-center space-x-3">
             {isAuthenticated ? (
               <>
-                <span className="text-sm text-gray-600 hidden sm:block">
+                <span className="text-sm text-gray-300 hidden sm:block">
                   Hi, {user?.first_name}
                 </span>
-                <button
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handleLogout}
-                  className="text-gray-600 hover:text-gray-900 text-sm"
                 >
                   Logout
-                </button>
+                </Button>
               </>
             ) : (
               <>
-                <Link href="/login" className="text-gray-600 hover:text-blue-600 text-sm">
-                  Login
-                </Link>
-                <Link href="/register" className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
-                  Sign Up
-                </Link>
+                <Button variant="ghost" asChild size="sm">
+                  <Link href="/login">Login</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href="/register">Sign Up</Link>
+                </Button>
               </>
             )}
           </div>

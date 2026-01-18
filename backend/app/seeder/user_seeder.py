@@ -1,12 +1,13 @@
 import bcrypt
+import logging
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from ..models.user import User
-from ..utils import get_logger
+from ..utils import setup_logger
 
 class UserSeeder:
     def __init__(self):
-        self.logger = get_logger("user_seeder")
+        self.logger = setup_logger("user_seeder", level=logging.INFO)
 
     def hash_password(self, password: str) -> str:
         """Hash a password using bcrypt"""

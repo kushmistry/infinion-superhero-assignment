@@ -31,7 +31,7 @@ export default function LoginForm() {
       if (response.data.status === 'success') {
         login(response.data.data);
         toast.success('Welcome back! 🎉');
-        router.push('/dashboard');
+        router.push('/heroes');
       } else {
         const errorMessage = getUserFriendlyErrorMessage(response.data.message || 'Login failed');
         toast.error(errorMessage);
