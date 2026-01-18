@@ -33,6 +33,9 @@ build/
 .env.local
 .env.production
 
+# Exception: Track .env.example files (templates for environment variables)
+!.env.example
+
 # Database
 *.db
 *.sqlite

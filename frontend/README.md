@@ -1,24 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Superhero Hub Frontend
+
+A modern Next.js application for browsing superheroes and building teams.
+
+## Features
+
+- 🦸 **Hero Database**: Browse and search superheroes
+- 👥 **Team Builder**: Create balanced superhero teams
+- ⭐ **Favorites**: Save your favorite heroes
+- 🔐 **Authentication**: User registration and login
+- 🎨 **Modern UI**: Built with Tailwind CSS and responsive design
+
+## Tech Stack
+
+- **Framework**: Next.js 14 with App Router
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
+- **State Management**: React Context + Hooks
+- **HTTP Client**: Axios
+- **Notifications**: React Hot Toast
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+
+- Backend API running (see backend README)
+
+### Installation
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Edit `.env.local`:
+```bash
+# Backend API URL (adjust if your backend is on different port)
+NEXT_PUBLIC_API_URL=http://localhost:8001
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── auth/              # Authentication pages
+│   ├── dashboard/         # User dashboard
+│   └── layout.tsx         # Root layout
+├── components/            # Reusable components
+│   ├── auth/             # Authentication forms
+│   └── layout/           # Layout components
+├── contexts/             # React contexts
+│   └── AuthContext.tsx   # Authentication state
+├── lib/                  # Utilities
+│   └── api.ts           # API client
+└── hooks/               # Custom React hooks
+```
 
 ## Learn More
 
